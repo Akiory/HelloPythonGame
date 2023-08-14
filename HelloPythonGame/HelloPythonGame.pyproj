@@ -1,0 +1,90 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>45ba2028-185f-4e39-b795-1ab546875382</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>alien_invasion.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>HelloPythonGame</Name>
+    <RootNamespace>HelloPythonGame</RootNamespace>
+    <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="alien.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="alien_invasion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson12_6\game.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson12_6\projectile.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson12_6\settings.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson12_6\ship.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson12_6\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lesson13\star.py" />
+    <Compile Include="lesson13\game-stars.py" />
+    <Compile Include="lesson13\__init__.py" />
+    <Compile Include="lesson13_4\blob_invasion.py" />
+    <Compile Include="lesson13_4\blob.py" />
+    <Compile Include="lesson13_4\settings.py" />
+    <Compile Include="lesson13_4\__init__.py" />
+    <Compile Include="projectile.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="settings.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ship.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images\" />
+    <Folder Include="images\ships\" />
+    <Folder Include="lesson12_6\" />
+    <Folder Include="lesson13\" />
+    <Folder Include="lesson13\images\" />
+    <Folder Include="lesson13_4\" />
+    <Folder Include="lesson13_4\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\ships\alien_ship.bmp" />
+    <Content Include="images\ships\ship_34.bmp" />
+    <Content Include="lesson13\images\star.bmp" />
+    <Content Include="lesson13_4\images\blob.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
