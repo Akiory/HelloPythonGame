@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from damaged_sprite import Damaged_sprite
 
 class Alien(Sprite):
     """Класс, представляющий одного пришельца"""
@@ -25,16 +26,32 @@ class Alien(Sprite):
         # Запись горизонтальной позиции в виде Float
         self.x = float(self.rect.x)
 
+        # Установка спрайта повреждения
+        self.damaged_sprite = Damaged_sprite(self)
+        self.b_is_damaged = False
+
+
     def update(self):
         """Перемещает пришельца вправо"""
         self.x += self.settings.alien_speed * self.settings.fleet_direction
         self.rect.x = self.x
+
+        
+        
 
     def check_edges(self):
         """Проверяет находится ли пришелец у края экрана"""
         screen_rect = self.screen.get_rect()
         if (self.rect.right >= self.screen_rect.right) or (self.rect.left <= self.screen_rect.left):
             return True
+
+    def set_damaged(self):
+        """Рисует корабль в текущей позиции"""
+        self.b_is_damaged = True
+        
+        
+        
+
 
 
 

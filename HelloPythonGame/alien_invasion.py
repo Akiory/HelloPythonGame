@@ -13,6 +13,9 @@ class AlienInvasion:
         """Инициализирует игру и создаёт игровые ресурсы."""
         pygame.init()
 
+        # Инициализируем Таймер
+        self.timer = pygame.time.Clock()
+
         # Создаём экземпляр settings
         self.settings = Settings()
         
@@ -26,15 +29,21 @@ class AlienInvasion:
 
         pygame.display.set_caption("Alien Invasion");
 
+
         # Создание экземпляра корабля
         self.ship = Ship(self)
         # Создание списка Projectile-ов
         self.projectiles = pygame.sprite.Group()
         # Создание списка пришельцев
         self.aliens = pygame.sprite.Group()
+        # Уроны
+        self.damage_sprites = pygame.sprite.Group()
+        
 
         # Создание флота пришельцев
         self._create_alien_fleet()
+
+        
 
     def run_game(self):
         """Запуск основного цикла игры."""
@@ -87,7 +96,12 @@ class AlienInvasion:
         for projectile in self.projectiles.sprites():
             projectile.draw_projectile()
         # Прорисовка флота пришельцев
-        self.aliens.draw(self.screen) # Оказывается у класса sprite есть отличный метод draw O_o
+        self.aliens.draw(self.screen) # Оказывается у группы класса sprite есть отличный метод draw O_o
+
+        # Прорисовка повреждений
+        self.damage_sprites.draw(self.screen)
+
+
 
         # Отображение последнего прорисованного экрана
         pygame.display.flip()
@@ -139,7 +153,14 @@ class AlienInvasion:
         for projectile in self.projectiles.copy():
             if (projectile.rect.bottom <= 0):
                 self.projectiles.remove(projectile)
-        print(len(self.projectiles))
+        # print(len(self.projectiles))
+
+        # Проверяем коллизии
+        self._check_collision()
+
+        # Проверяем наличие флота пришельцев
+        self._check_aliens_avalability()
+
 
     def _create_alien_fleet(self):
         alien = Alien(self)
@@ -169,6 +190,7 @@ class AlienInvasion:
     def _update_aliens(self):
         self._check_fleet_edges()
         self.aliens.update()
+        self.damage_sprites.update()
         
         
 
@@ -184,14 +206,39 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.alien_down_speed
         self.settings.fleet_direction *= -1
-    # Создание пришельца (old)
-        #for i in range(self.settings.aliens_count - 1):
-            #alien = Alien(self)
-            #alien.rect.x += (192 * i )
-            #self.aliens.add(alien)
-        
+
+    def _check_collision(self):
+        """Проверяет коллизии"""
+        # Метод groupcollide() возвращает словарь объектов из переданных групп
+        # если между объектами из разных групп произошла коллизия. И удаляет их, 
+        # если установлены флаги True для каджой группы
+        self.collisions = pygame.sprite.groupcollide(
+            self.projectiles, self.aliens, True, False)
+        # Устанавливаем повреждение для пришельца
+        if bool(self.collisions):    
+            aliens_collised = self.collisions.copy().values()
+            for alien in aliens_collised:
+                if bool(alien[0]):
+                    # Выглядит не очень, как-то неоптимально чтоли
+                    if alien[0].b_is_damaged:
+                        # Удаляем пришельца и его повреждения если он повреждён
+                        self.damage_sprites.remove(alien[0].damaged_sprite)
+                        self.aliens.remove(alien[0])
+                        continue
+                    alien[0].set_damaged()
+                    self.damage_sprites.add(alien[0].damaged_sprite)
+
+
+    def _check_aliens_avalability(self):
+        # Если нет пришельцев в группе
+        if not self.aliens:
+            self.projectiles.empty()
+            self._create_alien_fleet()
+
 
 # Создание экземпляра и запуск игры.
+
+
 ai = AlienInvasion()
 ai.run_game()
 
