@@ -17,3 +17,10 @@ class Settings:
         self.projectile_height = 15
         self.projectile_color = (60, 60, 60)
         self.projectiles_allowed = 3
+
+        # Параметры флота пришельцев
+        self.aliens_count = 5
+        self.alien_vertical_speed = 0.5
+        self.alien_horizontal_speed = 0.1
+        self.alien_down_speed = 10
+        self.fleet_direction = 1
