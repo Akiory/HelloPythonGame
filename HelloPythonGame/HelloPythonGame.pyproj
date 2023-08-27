@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>45ba2028-185f-4e39-b795-1ab546875382</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>lesson13_5\game.py</StartupFile>
+    <StartupFile>alien_invasion.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -29,6 +29,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="damaged_sprite.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game_stats.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="lesson13_5\alien.py" />
@@ -68,7 +71,7 @@
     <Compile Include="ship.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test.py">
+    <Compile Include="test_2.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

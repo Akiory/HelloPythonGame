@@ -20,10 +20,7 @@ class Ship():
         self.rect = self.image.get_rect()
 
         # Каждый новый корабль появляется внизу экрана
-        self.rect.midbottom = self.screen_rect.midbottom
-
-        # Сохранение координаты центра корабля
-        self.x = float(self.rect.x)
+        self.center_ship()
 
         # Флаг перемещения
         self.b_moving_right = False
@@ -41,3 +38,12 @@ class Ship():
     def blitme(self):
         """Рисует корабль в текущей позиции"""
         self.screen.blit(self.image, self.rect)
+
+
+    def center_ship(self):
+        """Размещает корабль в центре"""
+         # Каждый новый корабль появляется внизу экрана
+        self.rect.midbottom = self.screen_rect.midbottom
+
+        # Сохранение координаты центра корабля
+        self.x = float(self.rect.x)
