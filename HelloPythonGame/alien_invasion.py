@@ -8,6 +8,11 @@ from projectile import Projectile
 from alien import Alien
 from game_stats import GameStats
 from time import sleep
+from button import Button
+
+from game_types import GameStates
+
+
 
 class AlienInvasion:
     """Класс для управления ресурсами и поведением игры"""
@@ -21,13 +26,6 @@ class AlienInvasion:
 
         # Создаём экземпляр settings
         self.settings = Settings()
-        
-
-        self.RED = (255, 0, 0)
-        self.GREEN = (0, 255, 0)
-        self.BLUE = (0, 0, 255)
-        self.GRAY = (200, 200, 200)
-
 
         # Создаём ссылку на экран
         if self.settings.b_fullscreen_mode:
@@ -51,39 +49,55 @@ class AlienInvasion:
         self.aliens = pygame.sprite.Group()
         # Уроны
         self.damage_sprites = pygame.sprite.Group()
-        
 
         # Создание флота пришельцев
         self._create_alien_fleet()
+
+        # Создаём кнопку начать игру 
+        self.play_button = Button(self, "Play!")
+
 
         
 
     def run_game(self):
         """Запуск основного цикла игры."""
         while True:
+
             
             # Отслеживание событий (в т.ч. с клавиатуры)
             self._check_events()
 
-            # Выполняется если игра активна
-            if self.stats.game_active:
-                # Обновление корабля
-                self.ship.update()
+            # Проба кейса
+            match self.stats.game_state:
+                case GameStates.Play:
 
-                # Обновление Projectile-ов
-                self._update_projectiles()
+                    # Выполняется если игра активна
+                    #if self.stats.game_state == Game_states.Play:
+                    # Обновление корабля
+                    self.ship.update()
 
-                # Обновление Alien ships
-                self._update_aliens()
+                    # Обновление Projectile-ов
+                    self._update_projectiles()
 
-                # Отрисовка элементов игры
-                self._update_screen()
+                    # Обновление Alien ships
+                    self._update_aliens()
+
+                    # Отрисовка элементов игры
+                    self._update_screen()
+
+                case GameStates.GameOver:
+                    self.stats.show_game_over()
+                    pygame.display.flip()
+
+                case GameStates.Menu:
+                    self.stats.show_game_over()
+                    pygame.display.flip()
+
+                case GameStates.Pause:
+                    self.stats.show_pause()
+                    pygame.display.flip()
 
                 
-
-            else:
-                self.stats.show_game_over()
-                pygame.display.flip()
 
 
 
@@ -141,7 +155,8 @@ class AlienInvasion:
         if (event.key == pygame.K_ESCAPE) or (event.key == pygame.K_q):
             sys.exit(0)
         elif (event.key == pygame.K_p):
-            self.stats.print_game_text("GAME OVER") 
+            self.set_pause()
+
 
         # Выстрел снарядом (Projectile-ом)
         if (event.key == pygame.K_SPACE):
@@ -245,20 +260,25 @@ class AlienInvasion:
             self.projectiles, self.aliens, True, False)
         # Устанавливаем повреждение для пришельца
         if bool(self.collisions):    
-            aliens_collised = self.collisions.copy().values()
-            for alien in aliens_collised:
-                if bool(alien[0]):
-                    # Выглядит не очень, как-то неоптимально чтоли
-                    if alien[0].b_is_damaged:
-                        # Удаляем пришельца и его повреждения если он повреждён
-                        self.damage_sprites.remove(alien[0].damaged_sprite)
-                        self.aliens.remove(alien[0])
-                        # Добавляем очки 
+            sprites_collised = self.collisions.copy()
+            print(sprites_collised)
+            # Т.к. sprites_collised - словарь с ключём Projectile и значением -
+            # - в виде списка пришельцев, хитро разворачиваем его:
+            for projectile in sprites_collised:
+                for alien in sprites_collised[projectile]:
+                    # Удаляем пришельца если он повреждён
+                    if alien.b_is_damaged:
+                        #Убираем повреждения пришельца и "убиваем" его
+                        alien.damaged_sprite.kill()
+                        alien.kill()
+                        # Добавляем очки
                         self.stats.game_scores += 100
                         continue
-                    alien[0].set_damaged()
-                    self.damage_sprites.add(alien[0].damaged_sprite)
-
+                    
+                    # Добавляем повреждения пришельца в общую группу повреждений
+                    alien.set_damaged()
+                    self.damage_sprites.add(alien.damaged_sprite)
+                    
 
     def _check_aliens_avalability(self):
         """Создаёт флот, если группа пришельцев пуста"""
@@ -286,7 +306,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
         else:
-            self.stats.game_active = False
+            self.stats.game_state = GameStates.GameOver
 
         # Очистка пришельцев снарядов и спрайтов повреждения
         self.aliens.empty()
@@ -308,6 +328,14 @@ class AlienInvasion:
                 # Выполняется то же самое, что и при столкновении с короаблём
                 self._ship_hit()
                 break
+
+    def set_pause(self):
+        """Устанавливает паузу. Если пауза уже установлена, снимает паузу"""
+        if self.stats.game_state == GameStates.Play:
+            self.stats.game_state = GameStates.Pause
+        elif self.stats.game_state == GameStates.Pause:
+            self.stats.game_state = GameStates.Play
+
 
 
 

@@ -12,6 +12,7 @@
     <Name>HelloPythonGame</Name>
     <RootNamespace>HelloPythonGame</RootNamespace>
     <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
+    <InterpreterId>Global|PythonCore|3.11</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,7 +29,13 @@
     <Compile Include="alien_invasion.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="button.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="damaged_sprite.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game_types.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="game_stats.py">
@@ -98,6 +105,9 @@
     <Content Include="images\ships\ship_34.bmp" />
     <Content Include="lesson13\images\star.bmp" />
     <Content Include="lesson13_4\images\blob.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.11" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
