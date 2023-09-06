@@ -9,9 +9,9 @@ from alien import Alien
 from game_stats import GameStats
 from time import sleep
 from button import Button
+from scoreboard import Scoreboard
 
 from game_types import GameStates
-
 
 
 class AlienInvasion:
@@ -41,6 +41,10 @@ class AlienInvasion:
         self.stats = GameStats(self)
 
 
+        #----------Создаём-экземпляр-для-хранения-счёта----------
+        self.sb = Scoreboard(self)
+        
+
         # Создание экземпляра корабля
         self.ship = Ship(self)
         # Создание списка Projectile-ов
@@ -54,7 +58,12 @@ class AlienInvasion:
         self._create_alien_fleet()
 
         # Создаём кнопку начать игру 
-        self.play_button = Button(self, "Play!")
+        self.play_button = Button(self, "New game")
+
+        # Запускаем какафонию :D
+        pygame.mixer.music.load('sounds/PewPewOlolo.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
 
 
         
@@ -90,7 +99,7 @@ class AlienInvasion:
                     pygame.display.flip()
 
                 case GameStates.Menu:
-                    self.stats.show_game_over()
+                    self.show_game_menu()
                     pygame.display.flip()
 
                 case GameStates.Pause:
@@ -113,7 +122,12 @@ class AlienInvasion:
             # Событие по нажатию кнопки
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
+        # Проверка, должен ли отображаться курсор
+        self._check_cursor_visibility()
 
 
     def _update_screen(self):
@@ -137,6 +151,10 @@ class AlienInvasion:
         # Прорисовка игрового текста
         self.stats.update_game_text()
 
+        #----------Вывод информации о счёте------------
+        self.sb.show_score()
+
+
         # Отображение последнего прорисованного экрана
         pygame.display.flip()
         
@@ -151,8 +169,13 @@ class AlienInvasion:
             # Нажатие влево
             self.ship.b_moving_left = True
 
+
+        # Вызов меню
+        if (event.key == pygame.K_ESCAPE):
+            self.set_to_menu_state()
+
         # Выход на кнопку
-        if (event.key == pygame.K_ESCAPE) or (event.key == pygame.K_q):
+        if (event.key == pygame.K_q):
             sys.exit(0)
         elif (event.key == pygame.K_p):
             self.set_pause()
@@ -173,6 +196,7 @@ class AlienInvasion:
         elif (event.key == pygame.K_LEFT):
             # Отпускание влево
             self.ship.b_moving_left = False
+
 
     def _launch_projectile(self):
         """Создание нового снаряда и включение его в группу Projectiles"""
@@ -335,6 +359,47 @@ class AlienInvasion:
             self.stats.game_state = GameStates.Pause
         elif self.stats.game_state == GameStates.Pause:
             self.stats.game_state = GameStates.Play
+
+
+    def _check_play_button(self, mouse_pos):
+        """Запускает новую игру при нажатии кнопки Play"""
+       
+        # Метод collidepoint отпределяет находится ли точка щелчка в пределах rect
+        if self.play_button.rect.collidepoint(mouse_pos) and (
+            self.stats.game_state == GameStates.Menu):
+
+            # Сброс статистики, установка состояния игры - Play
+            self.stats.reset_stats()
+            self.stats.game_state = GameStates.Play
+
+            # Очистка списков пришельцев и снарядов и эффектов
+            self.aliens.empty()
+            self.projectiles.empty()
+            self.damage_sprites.empty()
+
+            # Создание нового флота
+            self._create_alien_fleet()
+            self.ship.center_ship()
+
+    def _check_cursor_visibility(self):
+        """В соответствии с игровыми состояниями устанавливает видимость курсора"""
+        if self.stats.game_state == GameStates.Play and pygame.mouse.get_visible():
+            pygame.mouse.set_visible(False)
+        elif not (self.stats.game_state == GameStates.Play) and not (pygame.mouse.get_visible()):
+            pygame.mouse.set_visible(True)
+
+
+    def show_game_menu(self):
+        self.stats.show_game_title()
+        self.play_button.draw_button()
+        self.stats.show_game_controls()
+
+
+    def set_to_menu_state(self):
+        if (self.stats.game_state == GameStates.Menu):
+            self.stats.game_state = GameStates.Play
+        elif (self.stats.game_state == GameStates.Play):
+            self.stats.game_state = GameStates.Menu
 
 
 

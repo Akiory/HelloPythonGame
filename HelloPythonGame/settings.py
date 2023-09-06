@@ -15,7 +15,7 @@ class Settings():
 
         # Параметры корабля
         self.ship_speed = 1
-        self.ship_limit = 0
+        self.ship_limit = 2
 
         # Параметры снаряда
         self.projectile_speed = 2
